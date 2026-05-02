@@ -26,7 +26,7 @@ LinkedList* ListCtor ()
 
     list->size = 0;
 
-    CreateLogFile (list, "list_dump.dot");
+    //CreateLogFile (list, "list_dump.dot");
 
     return list;
 }
@@ -40,7 +40,7 @@ void ListDtor (LinkedList* list)
     while (current != list->dummy)
     {
         Node* next = current->next;
-        free (curr->key);
+        free (current->key);
         free (current);
         current = next;
     }
@@ -82,14 +82,14 @@ Node* InsertAfterNode (LinkedList* list, Node* after_node, const char* key)
 
     list->size++;
 
-    VerifyList (list);
+    //VerifyList (list);
 
-    CreateLogFile (list, "list_dump.dot");
+    //CreateLogFile (list, "list_dump.dot");
 
     return new_node;
 }
 
-Node* ListFindNode(LinkedList* list, const char* key)
+Node* ListFindNode (LinkedList* list, const char* key)
 {
     if (!list || !key) return NULL;
     Node* current = list->dummy->next;
@@ -127,7 +127,7 @@ int DeleteNode (LinkedList* list, Node* node)
     free (node);
     list->size--;
 
-    CreateLogFile (list, "list_dump.dot");
+    //CreateLogFile (list, "list_dump.dot");
 
     return 0;
 }
@@ -136,7 +136,7 @@ void CreateLogFile (LinkedList* list, const char* filename)
 {
     assert(list);
 
-    FILE* dot_file = fopen(filename, "w");
+    FILE* dot_file = fopen (filename, "w");
 
     Create_head_log_file (dot_file);
 
@@ -146,11 +146,11 @@ void CreateLogFile (LinkedList* list, const char* filename)
 
     Make_arrow (list, dot_file);
 
-    Make_service_signs(list, dot_file);
+    Make_service_signs (list, dot_file);
 
     Create_picture ();
 
-    fclose(dot_file);
+    fclose (dot_file);
 }
 
 void Create_head_log_file (FILE* dot_file)
@@ -227,13 +227,13 @@ void Create_graph_node (LinkedList* list, FILE* dot_file)
         }*/
         fprintf(dot_file, "        node%p [label=<<TABLE BORDER='1' CELLBORDER='1' CELLSPACING='0'>"
                           "<TR><TD COLSPAN='2'><B>Addr: %p</B></TD></TR>"
-                          "<TR><TD COLSPAN='2'>Data: %d</TD></TR>"
+                          "<TR><TD COLSPAN='2'>Key: %s</TD></TR>"          // было Data: %d
                           "<TR><TD>Next: %p</TD><TD>Prev: %p</TD></TR></TABLE>>, "
                           "fillcolor=\"%s\", color=\"%s\", fontcolor=\"%s\"];\n",
-               (void*)current, (void*)current, current->data,
+               (void*)current, (void*)current, current->key,
                (void*)current->next, (void*)current->prev, fillcolor, color, color);
 
-        printf("BLOCKS Writing TO file.....\n");
+        printf ("BLOCKS Writing TO file.....\n");
 
         current = current->next;
     }
@@ -317,7 +317,7 @@ void Make_arrow (LinkedList* list, FILE* dot_file)
     //int free_pos = Get_first_free_pos(list);
 }
 
-void Make_service_signs(LinkedList* list, FILE* dot_file)
+void Make_service_signs (LinkedList* list, FILE* dot_file)
 {
     assert(list);
 

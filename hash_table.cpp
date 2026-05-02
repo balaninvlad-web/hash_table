@@ -12,14 +12,14 @@ HashTable* HashCtor (size_t table_size, HashFunc hash_func)
     assert (table_size > 0);
     assert (hash_func);
 
-    HashTable hash_table = (HashTable*) calloc (1, sizeof(HashTable));
+    HashTable* hash_table = (HashTable*) calloc (1, sizeof(HashTable));
     if (!hash_table) 
     {
         fprintf (stderr, "HashCtor: failed to allocate HashTable\n");
         return NULL;
     }
 
-    hash_table->buckets = (LinkedList**) calloc (size, sizeof(LinkedList*));
+    hash_table->buckets = (LinkedList**) calloc (table_size, sizeof(LinkedList*));
 
     if (!hash_table->buckets)
     {
@@ -28,7 +28,7 @@ HashTable* HashCtor (size_t table_size, HashFunc hash_func)
     }
 
     hash_table->size = table_size;
-    hash_table->func = hash_func;
+    hash_table->hash_func = hash_func;
     hash_table->load_factor = 0.0;
 
     for (size_t i = 0; i < table_size; i++)
@@ -87,7 +87,7 @@ void HashPrintStats(const HashTable* hash_table)
         unique_words += chain_len;
         if (chain_len > max_chain) max_chain = chain_len;
     }
-    
+
     double avg = (double) unique_words / hash_table->size;
     printf ("Hash table stats:\n");
     printf ("  Buckets: %zu\n", hash_table->size);

@@ -1,6 +1,7 @@
 #ifndef LIST_ON_SIGNS_FUNC_H
 #define LIST_ON_SIGNS_FUNC_H
-#include <TXLib.h>
+
+#include <string.h> 
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
@@ -34,7 +35,7 @@ Node* GetTail (LinkedList* list);
 void VerifyList (LinkedList* list);
 void PrintList (LinkedList* list);
 
-void Create_log_file (LinkedList* list, const char* filename);
+void CreateLogFile (LinkedList* list, const char* filename);
 void Create_head_log_file (FILE* dot_file);
 void Create_graph_node (LinkedList* list, FILE* dot_file);
 void Make_ranking (LinkedList* list, FILE* dot_file);

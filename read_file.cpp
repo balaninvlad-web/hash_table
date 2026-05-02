@@ -1,37 +1,5 @@
 #include "read_file.h"
 
-int main (int argc, char* argv[])
-{
-    const char* filename = argv[1];
-    size_t buffer_size = 0;
-    printf ("1\n");
-    char* buffer = ReadFile (filename, &buffer_size);
-    printf ("2\n");
-    if (!buffer) return 1;
-
-    int word_count = 0;
-    printf ("3\n");
-    char** words = ReadWordsFromBuffer (buffer, &buffer_size, &word_count);
-    printf ("4\n");
-    if (!words)
-    {
-        free (buffer);
-        return 1;
-    }
-    printf ("5\n");
-    printf ("Count words: %d\n", word_count);
-    printf ("first's 20:\n");
-    for (int i = 0; i < word_count && i < 20; ++i) 
-    {
-        printf ("%s\n", words[i]);
-    }
-
-    free (words);
-    free (buffer);
-
-    return 0;
-}
-
 char* ReadFile (const char* filename, size_t* out_size)
 {
     FILE* file = fopen (filename, "rb");
