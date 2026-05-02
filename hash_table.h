@@ -5,26 +5,24 @@
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
+#include <stddef.h>
+#include "list_on_signs_func.h"
+
+typedef uint64_t (*HashFunc)(const char* key);
 
 typedef struct 
 {
-    HashNode** buckets;  
-    size_t size;          
+    LinkedList** buckets;  
+    size_t size; 
+    float load_factor;    
+    HashFunc hash_func;      
     //size_t count;  количество ключей пока нету        
-    unsigned int (*hash) (const char* key, size_t table_size);
 } HashTable;
 
-typedef struct
-{
-    char* key;
-    int value;
-    HashNode* next;
-    HashNode* prev;
-} HashNode;
-
-HashTable* HashCreate (size_t table_size, HashFunc hash_func);
-void HashInsert (HashTable* ht, const char* key);
-int HashSearch (const HashTable* ht, const char* key);
-void HashFree (HashTable* ht);
+HashTable* HashCtor (size_t table_size, HashFunc hash_func);
+void HashDtor (HashTable* hash_table);
+void HashInsert (HashTable* hash_table, const char* key);
+int HashGet (const HashTable* ht, const char* key);
+void HashPrintStats (const HashTable* ht);
 
 #endif
