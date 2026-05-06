@@ -95,3 +95,40 @@ void HashPrintStats(const HashTable* hash_table)
     printf ("  Max chain length: %zu\n", max_chain);
     printf ("  Average chain length: %.2f\n", avg);
 }
+
+
+void HashTablePrintBuckets(const HashTable* hash_table)
+{
+    if (!hash_table) return;
+    
+    printf ("\n========== Hash Table Buckets Content ==========\n");
+    printf ("Total buckets: %zu\n", hash_table->size);
+    printf ("\n");
+    
+    int non_empty_buckets = 0;
+    
+    for (size_t i = 0; i < hash_table->size; i++)
+    {
+        LinkedList* list = hash_table->buckets[i];
+        if (!list || list->size == 0) continue;
+        
+        non_empty_buckets++;
+        printf("Bucket [%4zu] (%zu words): ", i, list->size);
+        
+        Node* current = GetHead (list);
+        int word_idx = 0;
+        while (current != list->dummy)
+        {
+            if (word_idx > 0) printf (" -> ");
+            printf ("'%s'(%d)", current->key, current->count);
+            current = current->next;
+            word_idx++;
+        }
+        printf ("\n");
+    }
+    
+    printf ("\nNon-empty buckets: %d / %zu (%.2f%%)\n", 
+            non_empty_buckets, hash_table->size, 
+            (double)non_empty_buckets / hash_table->size * 100);
+    printf ("================================================\n");
+}

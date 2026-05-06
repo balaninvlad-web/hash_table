@@ -42,6 +42,7 @@ int main (int argc, char* argv[])
         HashInsert (hash_table, words[i]);
 
     HashPrintStats (hash_table);
+    //HashTablePrintBuckets (hash_table); для дебага но все гуд
 
     HashDtor (hash_table);
     free (words);

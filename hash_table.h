@@ -25,5 +25,5 @@ void HashDtor (HashTable* hash_table);
 void HashInsert (HashTable* hash_table, const char* key);
 int HashGet (const HashTable* hash_table, const char* key);
 void HashPrintStats (const HashTable* hash_table);
-
+void HashTablePrintBuckets (const HashTable* hash_table);
 #endif
