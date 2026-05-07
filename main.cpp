@@ -30,7 +30,7 @@ int main (int argc, char* argv[])
         printf ("%s\n", words[i]);
     }
 
-    HashTable* hash_table = HashCtor (4096, HashGnu);
+    /*HashTable* hash_table = HashCtor (4096, HashGnu);
     if (!hash_table)
     {
         free (words);
@@ -38,13 +38,26 @@ int main (int argc, char* argv[])
         return 1;
     }
 
+    hash_table->hash_func = HashAlwaysOne;
+
     for (int i = 0; i < word_count; ++i) 
         HashInsert (hash_table, words[i]);
 
-    HashPrintStats (hash_table);
+    HashTableDescription (hash_table, "hash_always_one");
+    HashPrintStats (hash_table);*/
     //HashTablePrintBuckets (hash_table); для дебага но все гуд
 
-    HashDtor (hash_table);
+    
+    //CompletelyHashFuncs (words, HashAlwaysOne,   buffer, &word_count, "HashAlwaysOne.txt");
+    CompletelyHashFuncs (words, HashFirstChar,   buffer, &word_count, "HashFirstChar.txt");
+    CompletelyHashFuncs (words, HashLength,      buffer, &word_count, "HashLength.txt");
+    CompletelyHashFuncs (words, HashSum,         buffer, &word_count, "HashSum.txt");
+    CompletelyHashFuncs (words, HashRotateLeft,  buffer, &word_count, "HashRotateLeft.txt");
+    CompletelyHashFuncs (words, HashRotateRight, buffer, &word_count, "HashRotateRight.txt");
+    CompletelyHashFuncs (words, HashGnu,         buffer, &word_count, "HashGnu.txt");
+    //CompletelyHashFuncs (words, HashCrc32,       buffer, &word_count, "HashCrc32");
+    
+    //HashDtor (hash_table);
     free (words);
     free (buffer);
 

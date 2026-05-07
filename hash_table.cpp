@@ -1,5 +1,25 @@
 #include "hash_table.h"
 
+
+void CompletelyHashFuncs (char** words, HashFunc hash_func, char* buffer, int* word_count, const char* filename)
+{
+    HashTable* hash_table = HashCtor (4096, hash_func);
+    if (!hash_table)
+    {
+        free (words);
+        free (buffer);
+        return;
+    }
+
+    for (int i = 0; i < *word_count; ++i) 
+        HashInsert (hash_table, words[i]);
+
+    HashTableDescription (hash_table, filename);
+    HashPrintStats (hash_table);
+    //HashTablePrintBuckets (hash_table); для дебага но все гуд
+
+    HashDtor (hash_table);
+}
 static LinkedList* GetBucket (const HashTable* hash_table, const char* key)
 {
     uint64_t hash = hash_table->hash_func (key);
@@ -97,7 +117,7 @@ void HashPrintStats(const HashTable* hash_table)
 }
 
 
-void HashTablePrintBuckets(const HashTable* hash_table)
+void HashTablePrintBuckets (const HashTable* hash_table)
 {
     if (!hash_table) return;
     
@@ -131,4 +151,27 @@ void HashTablePrintBuckets(const HashTable* hash_table)
             non_empty_buckets, hash_table->size, 
             (double)non_empty_buckets / hash_table->size * 100);
     printf ("================================================\n");
+}
+
+void HashTableDescription (const HashTable* hash_table, const char* filename)
+{
+    assert (hash_table);
+    assert (filename);
+
+    FILE* file = fopen (filename, "w");
+    
+    if (!file)
+    {
+        fprintf (stderr, "Cannot open file %s for writing\n", filename);
+        return;
+    }
+
+    for (size_t i = 0; i < hash_table->size; i++)
+    {
+        size_t count = hash_table->buckets[i]->size;
+        fprintf (file, "%zu,%zu\n", i, count);
+    }
+
+    fclose (file);
+    printf ("Saved distribution to %s\n", filename);
 }
