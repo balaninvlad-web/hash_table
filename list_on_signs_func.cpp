@@ -53,13 +53,11 @@ Node* InsertAfterNode (LinkedList* list, Node* after_node, const char* key)
     if (!list || !key) return NULL;
 
     Node* new_node = (Node*) calloc (1, sizeof(Node));
-
     if (!new_node)
     {
         fprintf (stderr, "ERORR: in InsertNode - memory allocation\n");
         return NULL;
     }
-
     new_node->key = strdup(key);
     if (!new_node->key) 
     {
@@ -67,7 +65,6 @@ Node* InsertAfterNode (LinkedList* list, Node* after_node, const char* key)
         fprintf(stderr, "ERROR: InsertAfterNode - strdup failed\n");
         return NULL;
     }
-
     new_node->count = 1;
 
     if (after_node == NULL)
@@ -85,7 +82,6 @@ Node* InsertAfterNode (LinkedList* list, Node* after_node, const char* key)
     //VerifyList (list);
 
     //CreateLogFile (list, "list_dump.dot");
-
     return new_node;
 }
 

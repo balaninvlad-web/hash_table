@@ -1,5 +1,27 @@
 #include "read_file.h"
 
+char** FullWordLoading (const char* filename, int* word_count)
+{
+    size_t buffer_size = 0;
+    char* buffer = ReadFile (filename, &buffer_size);
+    if (!buffer) return NULL;
+
+    char** words = ReadWordsFromBuffer (buffer, &buffer_size, word_count);
+    if (!words)
+    {
+        free (buffer);
+        return NULL;
+    }
+    printf ("Count words: %d\n", *word_count);
+    printf ("first's 20:\n");
+    for (int i = 0; i < *word_count && i < 20; ++i) 
+    {
+        printf ("%s\n", words[i]);
+    }
+
+    return words;
+}
+
 char* ReadFile (const char* filename, size_t* out_size)
 {
     FILE* file = fopen (filename, "rb");

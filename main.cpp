@@ -3,63 +3,55 @@
 #include "list_on_signs_func.h"
 #include "hash_funcs.h"
 
+#define HASH_FUNC_ENTRY(func) { #func, func }
+
 int main (int argc, char* argv[])
 {
-    if (argc != 2)
+    if (argc != 3)
     {
         printf ("Usage: %s <filename>\n", argv[0]);
         return 1;
     }
-
-    const char* filename = argv[1];
-    size_t buffer_size = 0;
-    char* buffer = ReadFile (filename, &buffer_size);
-    if (!buffer) return 1;
-
+    
     int word_count = 0;
-    char** words = ReadWordsFromBuffer (buffer, &buffer_size, &word_count);
-    if (!words)
-    {
-        free (buffer);
-        return 1;
-    }
-    printf ("Count words: %d\n", word_count);
-    printf ("first's 20:\n");
-    for (int i = 0; i < word_count && i < 20; ++i) 
-    {
-        printf ("%s\n", words[i]);
-    }
-
-    /*HashTable* hash_table = HashCtor (4096, HashGnu);
-    if (!hash_table)
-    {
-        free (words);
-        free (buffer);
-        return 1;
-    }
-
-    hash_table->hash_func = HashAlwaysOne;
-
-    for (int i = 0; i < word_count; ++i) 
-        HashInsert (hash_table, words[i]);
-
-    HashTableDescription (hash_table, "hash_always_one");
-    HashPrintStats (hash_table);*/
-    //HashTablePrintBuckets (hash_table); для дебага но все гуд
-
+    char** words = FullWordLoading (argv[1], &word_count);
+    if (!words) return 1;
     
-    //CompletelyHashFuncs (words, HashAlwaysOne,   buffer, &word_count, "HashAlwaysOne.txt");
-    CompletelyHashFuncs (words, HashFirstChar,   buffer, &word_count, "HashFirstChar.txt");
-    CompletelyHashFuncs (words, HashLength,      buffer, &word_count, "HashLength.txt");
-    CompletelyHashFuncs (words, HashSum,         buffer, &word_count, "HashSum.txt");
-    CompletelyHashFuncs (words, HashRotateLeft,  buffer, &word_count, "HashRotateLeft.txt");
-    CompletelyHashFuncs (words, HashRotateRight, buffer, &word_count, "HashRotateRight.txt");
-    CompletelyHashFuncs (words, HashGnu,         buffer, &word_count, "HashGnu.txt");
-    //CompletelyHashFuncs (words, HashCrc32,       buffer, &word_count, "HashCrc32");
-    
-    //HashDtor (hash_table);
+    int test_word_count = 0;
+    char** test_words = FullWordLoading (argv[2], &test_word_count);
+    if (!test_words) return 1;
+
+    HashFuncInfo funcs[] = 
+    {
+        HASH_FUNC_ENTRY (HashAlwaysOne),
+        HASH_FUNC_ENTRY (HashFirstChar),
+        HASH_FUNC_ENTRY (HashLength),
+        HASH_FUNC_ENTRY (HashSum),
+        HASH_FUNC_ENTRY (HashRotateLeft),
+        HASH_FUNC_ENTRY (HashRotateRight),
+        HASH_FUNC_ENTRY (HashGnu),
+        HASH_FUNC_ENTRY (HashCrc32)
+    };
+    size_t func_count = sizeof (funcs) / sizeof (funcs[0]);
+
+    for (size_t i = 0; i < func_count; ++i) 
+    {
+        HashTable* hash_table = HashCtor (4096, funcs[i].func);
+        if (!hash_table)
+        {
+            free (words);
+            return 1;
+        }
+        char out_filename[256] = {};
+        snprintf (out_filename, sizeof (out_filename), "%s.txt", funcs[i].name);
+        CompletelyHashFuncs (hash_table, words, &word_count, out_filename);
+        size_t found = SearchWordsHashTable (hash_table, test_words, test_word_count, 1);
+        printf ("[%s] Found: %zu out of %d\n\n", 
+                funcs[i].name, found, test_word_count);
+        HashDtor (hash_table);
+    }
+
     free (words);
-    free (buffer);
 
     return 0;
 }
