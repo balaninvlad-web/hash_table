@@ -6,7 +6,9 @@ void CompletelyHashFuncs (HashTable* hash_table, char** words, int* word_count, 
     for (int i = 0; i < *word_count; ++i) 
         HashInsert (hash_table, words[i]);
     HashTableDescription (hash_table, filename);
-    HashPrintStats (hash_table);
+    #ifndef NDEBUG
+        HashPrintStats (hash_table);
+    #endif
     //HashTablePrintBuckets (hash_table); для дебага но все гуд
 }
 static LinkedList* GetBucket (const HashTable* hash_table, const char* key)
@@ -32,7 +34,7 @@ HashTable* HashCtor (size_t table_size, HashFunc hash_func)
 
     if (!hash_table->buckets)
     {
-        printf("HashCtor calloc ERROR\n");
+        printf ("HashCtor calloc ERROR\n");
         return NULL;
     }
 
@@ -84,7 +86,7 @@ int HashGet (const HashTable* hash_table, const char* key)
     return node ? node->count : 0;
 }
 
-void HashPrintStats(const HashTable* hash_table)
+void HashPrintStats (const HashTable* hash_table)
 {
     if (!hash_table) return;
     size_t unique_words = 0;

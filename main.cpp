@@ -5,22 +5,14 @@
 
 #define HASH_FUNC_ENTRY(func) { #func, func }
 
-int main (int argc, char* argv[])
-{
-    if (argc != 3)
-    {
-        printf ("Usage: %s <filename>\n", argv[0]);
-        return 1;
-    }
-    
-    int word_count = 0;
-    char** words = FullWordLoading (argv[1], &word_count);
-    if (!words) return 1;
-    
-    int test_word_count = 0;
-    char** test_words = FullWordLoading (argv[2], &test_word_count);
-    if (!test_words) return 1;
-
+#ifdef BENCHMARK_MODE
+     #define SEARCH_REPETITIONS 1000000
+    #define SAVE_DISTRIBUTIONS 0
+    HashFuncInfo funcs[] = { HASH_FUNC_ENTRY (HashCrc32) };
+    const size_t func_count = 1;  
+#else
+    #define SEARCH_REPETITIONS 200
+    #define SAVE_DISTRIBUTIONS 1
     HashFuncInfo funcs[] = 
     {
         HASH_FUNC_ENTRY (HashAlwaysOne),
@@ -32,7 +24,26 @@ int main (int argc, char* argv[])
         HASH_FUNC_ENTRY (HashGnu),
         HASH_FUNC_ENTRY (HashCrc32)
     };
-    size_t func_count = sizeof (funcs) / sizeof (funcs[0]);
+    const size_t func_count = sizeof (funcs) / sizeof (funcs[0]);
+#endif
+
+int main (int argc, char* argv[])
+{
+    if (argc != 3)
+    {
+        printf ("Usage: %s <filename>\n", argv[0]);
+        return 1;
+    }
+    
+    int word_count = 0;
+    char* main_buffer = NULL;
+    char** words = FullWordLoading (argv[1], &word_count, &main_buffer);
+    if (!words) return 1;
+    
+    int test_word_count = 0;
+    char* test_buffer = NULL;
+    char** test_words = FullWordLoading (argv[2], &test_word_count, &test_buffer);
+    if (!test_words) return 1;
 
     for (size_t i = 0; i < func_count; ++i) 
     {
@@ -40,18 +51,28 @@ int main (int argc, char* argv[])
         if (!hash_table)
         {
             free (words);
+            free (test_words);
+            free (main_buffer);
+            free (test_buffer);
             return 1;
         }
         char out_filename[256] = {};
         snprintf (out_filename, sizeof (out_filename), "%s.txt", funcs[i].name);
         CompletelyHashFuncs (hash_table, words, &word_count, out_filename);
-        size_t found = SearchWordsHashTable (hash_table, test_words, test_word_count, 1);
-        printf ("[%s] Found: %zu out of %d\n\n", 
-                funcs[i].name, found, test_word_count);
+        unsigned long long start = __rdtsc();
+        size_t found = SearchWordsHashTable (hash_table, test_words, test_word_count, SEARCH_REPETITIONS);
+        unsigned long long end = __rdtsc();
+        unsigned long long total_ticks = end - start;
+        printf ("[%s] Found %zu / %zu, ticks: %llu, per search: %.2f\n",
+                 funcs[i].name, found, (size_t)test_word_count * 200,
+                 total_ticks, (double)total_ticks / (test_word_count * 200));
         HashDtor (hash_table);
     }
 
     free (words);
+    free (test_words);
+    free (main_buffer);
+    free (test_buffer);
 
     return 0;
 }

@@ -1,6 +1,6 @@
 #include "read_file.h"
 
-char** FullWordLoading (const char* filename, int* word_count)
+char** FullWordLoading (const char* filename, int* word_count, char** out_buffer)
 {
     size_t buffer_size = 0;
     char* buffer = ReadFile (filename, &buffer_size);
@@ -12,12 +12,16 @@ char** FullWordLoading (const char* filename, int* word_count)
         free (buffer);
         return NULL;
     }
-    printf ("Count words: %d\n", *word_count);
-    printf ("first's 20:\n");
-    for (int i = 0; i < *word_count && i < 20; ++i) 
-    {
-        printf ("%s\n", words[i]);
-    }
+    #ifndef NDEBUG
+        printf ("Count words: %d\n", *word_count);
+        printf ("first's 20:\n");
+        for (int i = 0; i < *word_count && i < 20; ++i) 
+        {
+            printf ("%s\n", words[i]);
+        }
+    #endif
+    
+    *out_buffer = buffer;
 
     return words;
 }
@@ -65,6 +69,7 @@ char** ReadWordsFromBuffer (char* buffer, size_t* buffer_size, int* word_count)
     assert (buffer);
     assert (buffer_size);
 
+
     char* ptr = buffer;
     int inside_word = 0;
     int count = 0;
@@ -109,11 +114,7 @@ char** ReadWordsFromBuffer (char* buffer, size_t* buffer_size, int* word_count)
                 words[index++] =&ptr[i];
             }
         }
-        else
-        {
-                inside_word = 0;
-        }
-        
+        else inside_word = 0; 
     }
 
     words[index] = NULL;

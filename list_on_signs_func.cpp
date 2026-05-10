@@ -26,8 +26,10 @@ LinkedList* ListCtor ()
 
     list->size = 0;
 
-    //CreateLogFile (list, "list_dump.dot");
-
+    #ifndef NDEGUG
+        //CreateLogFile (list, "list_dump.dot");
+    #endif
+    
     return list;
 }
 
@@ -79,9 +81,11 @@ Node* InsertAfterNode (LinkedList* list, Node* after_node, const char* key)
 
     list->size++;
 
-    //VerifyList (list);
+    #ifndef NDEGUG
+        //VerifyList (list);
+        //CreateLogFile (list, "list_dump.dot");
+    #endif
 
-    //CreateLogFile (list, "list_dump.dot");
     return new_node;
 }
 
@@ -130,7 +134,9 @@ int DeleteNode (LinkedList* list, Node* node)
 
 void CreateLogFile (LinkedList* list, const char* filename)
 {
-    assert(list);
+    #ifndef NDEBUG
+        assert(list);
+    #endif
 
     FILE* dot_file = fopen (filename, "w");
 
@@ -151,7 +157,9 @@ void CreateLogFile (LinkedList* list, const char* filename)
 
 void Create_head_log_file (FILE* dot_file)
 {
-    assert(dot_file);
+    #ifndef NDEBUG
+        assert(dot_file);
+    #endif
 
     printf("START Writing TO file.....\n");
 
@@ -172,9 +180,10 @@ void Create_head_log_file (FILE* dot_file)
 
 void Create_graph_node (LinkedList* list, FILE* dot_file)
 {
-    assert(list);
-
-    assert(dot_file);
+    #ifndef NDEBUG
+        assert(list);
+        assert(dot_file);
+    #endif
 
     fprintf(dot_file, "dummy [label=<<TABLE BORDER='1' CELLBORDER='1' CELLSPACING='0'>"
                       "<TR><TD COLSPAN='2'><B>DUMMY</B></TD></TR>"
@@ -239,9 +248,10 @@ void Create_graph_node (LinkedList* list, FILE* dot_file)
 
 void Make_ranking (LinkedList* list, FILE* dot_file)
 {
-    assert(list);
-
-    assert(dot_file);
+    #ifndef NDEGUG
+        assert(list);
+        assert(dot_file);
+    #endif
 
     if (list->size == 0)
     {
@@ -266,9 +276,10 @@ void Make_ranking (LinkedList* list, FILE* dot_file)
 
 void Make_arrow (LinkedList* list, FILE* dot_file)
 {
-    assert(list);
-
-    assert(dot_file);
+    #ifndef NDEGUG
+        assert(list);
+        assert(dot_file);
+    #endif
 
     printf("Make_arrow: creating connections...\n");
 
@@ -315,9 +326,10 @@ void Make_arrow (LinkedList* list, FILE* dot_file)
 
 void Make_service_signs (LinkedList* list, FILE* dot_file)
 {
-    assert(list);
-
-    assert(dot_file);
+    #ifndef NDEGUG
+        assert(list);
+        assert(dot_file);
+    #endif
 
     fprintf(dot_file, "    head [shape=Mrecord, color=\"#fdfdfd\", fillcolor=\"#5f3035\", fontcolor=white, style=filled, label=\"HEAD\"];\n");
     fprintf(dot_file, "    tail [shape=Mrecord, color=\"#fdfdfd\", fillcolor=\"#305551\", fontcolor=white, style=filled, label=\"TAIL\"];\n");
