@@ -57,23 +57,7 @@ uint64_t HashGnu (const char* key)
 
 uint64_t HashCrc32 (const char* key) 
 {
-    assert (key != NULL);
-
     uint32_t crc = 0xFFFFFFFF;
-
-    while (*key)
-    {
-        crc ^= (uint8_t) (*key);
-
-        for (int i = 0; i < 8; i++)
-        {
-            if (crc & 1)
-                crc = (crc >> 1) ^ 0xEDB88320;
-            else
-                crc >>= 1;
-        }
-        key++;
-    }
-
-    return (uint64_t)~crc;
+    while (*key) crc = _mm_crc32_u8(crc, *key++);
+    return ~crc;
 }

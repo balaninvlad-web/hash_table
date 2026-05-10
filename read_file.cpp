@@ -6,7 +6,7 @@ char** FullWordLoading (const char* filename, int* word_count, char** out_buffer
     char* buffer = ReadFile (filename, &buffer_size);
     if (!buffer) return NULL;
 
-    char** words = ReadWordsFromBuffer (buffer, &buffer_size, word_count);
+    char** words = ReadWordsFromBuffer (&buffer, &buffer_size, word_count);
     if (!words)
     {
         free (buffer);
@@ -64,60 +64,65 @@ char* ReadFile (const char* filename, size_t* out_size)
 
     return buffer; 
 }
-char** ReadWordsFromBuffer (char* buffer, size_t* buffer_size, int* word_count)
+
+char** ReadWordsFromBuffer(char** buffer, size_t* buffer_size, int* word_count)
 {
     assert (buffer);
+    assert (*buffer);
     assert (buffer_size);
-
-
-    char* ptr = buffer;
-    int inside_word = 0;
-    int count = 0;
-
-    for (size_t i = 0; i < *buffer_size; ++i)
+    assert (word_count);
+   
+    int inside = 0;
+    int cnt = 0;
+    for (size_t i = 0; i < *buffer_size; ++i) 
     {
-        if (isalpha ((unsigned char) ptr[i]))
+        if (isalpha ((unsigned char) (*buffer) [i])) 
         {
-            if (!inside_word)
-            {
-                inside_word = 1;
-                ++count;
+            if (!inside) 
+            { 
+                inside = 1; 
+                ++cnt; 
             }
-        }
-        else
+        } 
+        else 
         {
-            if (inside_word) inside_word = 0;
-            ptr[i] = '\0';
+            if (inside) inside = 0;
+            (*buffer)[i] = '\0';
         }
-    
     }
-
-    char** words = (char**) calloc (count + 1, sizeof (char*));
-
-    if (!words)
+   
+    char* aligned = (char*) _aligned_malloc ((size_t)cnt * 32, 32);
+    if (!aligned) return NULL;
+    
+    char** words = (char**) calloc (cnt, sizeof(char*));
+    if (!words) 
     {
-        printf ("ReadWordsFromBuffer calloc ERROR");
-        free (buffer);
-        buffer = NULL;
+        _aligned_free (aligned);
         return NULL;
     }
-
-    inside_word = 0;
-    int index = 0;
-    for (size_t i = 0; i < *buffer_size; i++)
+ 
+    inside = 0;
+    int idx = 0;
+    for (size_t i = 0; i < *buffer_size; ++i) 
     {
-        if (isalpha ((unsigned char) ptr[i]))
+        if (isalpha ((unsigned char) (*buffer)[i])) 
         {
-            if (!inside_word)
+            if (!inside) 
             {
-                inside_word = 1;
-                words[index++] =&ptr[i];
+                inside = 1;
+                size_t len = 0;
+               
+                while ((*buffer)[i + len] != '\0' && len < 31) ++len;
+                memcpy (aligned + idx * 32, &(*buffer)[i], len);
+                aligned[idx * 32 + len] = '\0';
+                words[idx] = aligned + idx * 32;
+                ++idx;
             }
-        }
-        else inside_word = 0; 
+        } else inside = 0;
     }
-
-    words[index] = NULL;
-    *word_count = count;
+    
+    free (*buffer);
+    *buffer = aligned;
+    *word_count = cnt;
     return words;
 }

@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <assert.h>
+#include <cstring>
 
 char* ReadFile (const char* filename, size_t* out_size);
 char** ReadWordsFromBuffer (char* buffer, size_t* buffer_size, int* word_count);

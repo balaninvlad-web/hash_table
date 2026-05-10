@@ -6,7 +6,7 @@
 #define HASH_FUNC_ENTRY(func) { #func, func }
 
 #ifdef BENCHMARK_MODE
-     #define SEARCH_REPETITIONS 1000000
+    #define SEARCH_REPETITIONS 1000000
     #define SAVE_DISTRIBUTIONS 0
     HashFuncInfo funcs[] = { HASH_FUNC_ENTRY (HashCrc32) };
     const size_t func_count = 1;  

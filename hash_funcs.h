@@ -2,6 +2,7 @@
 #define HASH_FUNCS_H
 
 #include <stdint.h>
+#include <nmmintrin.h>
 
 uint64_t HashAlwaysOne (const char* key);
 uint64_t HashFirstChar (const char* key);
