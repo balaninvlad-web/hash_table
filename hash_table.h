@@ -11,6 +11,18 @@
 #include <x86intrin.h> 
 #include "list_on_signs_func.h"
 
+#ifndef AVX_STRCMP_H
+#define AVX_STRCMP_H
+#ifdef __cplusplus
+extern "C" 
+{
+#endif
+int MyAvxStrcmp (const char* a, const char* b);
+#ifdef __cplusplus
+}
+#endif
+#endif
+
 typedef uint64_t (*HashFunc)(const char* key);
 
 typedef struct 

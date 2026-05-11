@@ -1,4 +1,5 @@
 #include "list_on_signs_func.h"
+#include "hash_table.h"
 
 #define MAX_COMMAND_LENGTH 200
 
@@ -42,7 +43,6 @@ void ListDtor (LinkedList* list)
     while (current != list->dummy)
     {
         Node* next = current->next;
-        free (current->key);
         free (current);
         current = next;
     }
@@ -60,13 +60,7 @@ Node* InsertAfterNode (LinkedList* list, Node* after_node, const char* key)
         fprintf (stderr, "ERORR: in InsertNode - memory allocation\n");
         return NULL;
     }
-    new_node->key = strdup(key);
-    if (!new_node->key) 
-    {
-        free(new_node);
-        fprintf(stderr, "ERROR: InsertAfterNode - strdup failed\n");
-        return NULL;
-    }
+    new_node->key = key;
     new_node->count = 1;
 
     if (after_node == NULL)
@@ -95,8 +89,7 @@ Node* ListFindNode (LinkedList* list, const char* key)
     Node* current = list->dummy->next;
     while (current != list->dummy) 
     {
-        if (current->key && strcmp(current->key, key) == 0) return current;
-    
+        if (current->key && MyAvxStrcmp (current->key, key) == 0) return current;
         current = current->next;
     }
     return NULL;
@@ -123,7 +116,6 @@ int DeleteNode (LinkedList* list, Node* node)
     node->prev->next = node->next;
     node->next->prev = node->prev;
 
-    free (node->key);
     free (node);
     list->size--;
 

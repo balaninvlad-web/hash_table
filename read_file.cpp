@@ -65,7 +65,7 @@ char* ReadFile (const char* filename, size_t* out_size)
     return buffer; 
 }
 
-char** ReadWordsFromBuffer(char** buffer, size_t* buffer_size, int* word_count)
+char** ReadWordsFromBuffer (char** buffer, size_t* buffer_size, int* word_count)
 {
     assert (buffer);
     assert (*buffer);
@@ -73,7 +73,7 @@ char** ReadWordsFromBuffer(char** buffer, size_t* buffer_size, int* word_count)
     assert (word_count);
    
     int inside = 0;
-    int cnt = 0;
+    int count = 0;
     for (size_t i = 0; i < *buffer_size; ++i) 
     {
         if (isalpha ((unsigned char) (*buffer) [i])) 
@@ -81,7 +81,7 @@ char** ReadWordsFromBuffer(char** buffer, size_t* buffer_size, int* word_count)
             if (!inside) 
             { 
                 inside = 1; 
-                ++cnt; 
+                ++count; 
             }
         } 
         else 
@@ -91,10 +91,11 @@ char** ReadWordsFromBuffer(char** buffer, size_t* buffer_size, int* word_count)
         }
     }
    
-    char* aligned = (char*) _aligned_malloc ((size_t)cnt * 32, 32);
+    char* aligned = (char*) _aligned_malloc ((size_t)count * 32, 32);
     if (!aligned) return NULL;
+    memset(aligned, 0, count * 32);
     
-    char** words = (char**) calloc (cnt, sizeof(char*));
+    char** words = (char**) calloc (count, sizeof(char*));
     if (!words) 
     {
         _aligned_free (aligned);
@@ -114,7 +115,8 @@ char** ReadWordsFromBuffer(char** buffer, size_t* buffer_size, int* word_count)
                
                 while ((*buffer)[i + len] != '\0' && len < 31) ++len;
                 memcpy (aligned + idx * 32, &(*buffer)[i], len);
-                aligned[idx * 32 + len] = '\0';
+                memset (aligned + idx * 32 + len, 0, 32 - len);  
+                aligned[idx * 32 + 31] = '\0';
                 words[idx] = aligned + idx * 32;
                 ++idx;
             }
@@ -123,6 +125,6 @@ char** ReadWordsFromBuffer(char** buffer, size_t* buffer_size, int* word_count)
     
     free (*buffer);
     *buffer = aligned;
-    *word_count = cnt;
+    *word_count = count;
     return words;
 }

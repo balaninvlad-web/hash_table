@@ -56,6 +56,7 @@ int main (int argc, char* argv[])
             free (test_buffer);
             return 1;
         }
+
         char out_filename[256] = {};
         snprintf (out_filename, sizeof (out_filename), "%s.txt", funcs[i].name);
         CompletelyHashFuncs (hash_table, words, &word_count, out_filename);
@@ -64,8 +65,8 @@ int main (int argc, char* argv[])
         unsigned long long end = __rdtsc();
         unsigned long long total_ticks = end - start;
         printf ("[%s] Found %zu / %zu, ticks: %llu, per search: %.2f\n",
-                 funcs[i].name, found, (size_t)test_word_count * 200,
-                 total_ticks, (double)total_ticks / (test_word_count * 200));
+                 funcs[i].name, found, (size_t)test_word_count * SEARCH_REPETITIONS,
+                 total_ticks, (double)total_ticks / (test_word_count * SEARCH_REPETITIONS));
         HashDtor (hash_table);
     }
 

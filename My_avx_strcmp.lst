@@ -1,0 +1,57 @@
+     1                                  ;:================================================
+     2                                  ;: My_avx_strcmp.asm                (c)VOV4IK,2026
+     3                                  ;:================================================
+     4                                  
+     5                                  ; My_printf – аналог strcmp для Windows x64 (NASM)
+     6                                  ; необходима выровненость строк по 32 байта
+     7                                  ; Используются AVX2 инструкции
+     8                                  ; Прототип: int MyAvxStrcmp (const char* a, const char* b);
+     9                                  ; Возвращает 0, если равны; иначе разницу первых несовпадающих символов.
+    10                                  ;nasm -f win64 My_avx_strcmp.asm -o My_avx_strcmp.obj -l "My_avx_strcmp.lst"
+    11                                  
+    12                                  section .text
+    13                                  global MyAvxStrcmp
+    14                                  
+    15                                  MyAvxStrcmp:
+    16                                              ; ymm0 - a, ymm1 - b
+    17                                  
+    18 00000000 56                                  push rsi
+    19 00000001 57                                  push rdi
+    20 00000002 53                                  push rbx
+    21                                  
+    22 00000003 4889CE                              mov rsi, rcx           ; rsi = a
+    23 00000006 4889D7                              mov rdi, rdx           ; rdi = b
+    24                                  
+    25 00000009 C5FD6F06                            vmovdqa ymm0, [rsi]
+    26 0000000D C5FD6F0F                            vmovdqa ymm1, [rdi]
+    27                                  
+    28                                              ; Сравнивание побайтово (байты равны -> получается 0xFF в ymm2)
+    29 00000011 C5FD74D1                            vpcmpeqb ymm2, ymm0, ymm1
+    30                                  
+    31 00000015 C5FDD7C2                            vpmovmskb eax, ymm2
+    32                                  
+    33                                              ; Если все 32 бита установлены (0xFFFFFFFF) -> строки равны
+    34 00000019 83F8FF                              cmp eax, 0xFFFFFFFF
+    35 0000001C 7414                                je .equal
+    36                                  
+    37 0000001E F7D0                                not eax
+    38                                  
+    39 00000020 F30FBCC8                            tzcnt ecx, eax
+    40                                  
+    41 00000024 0FB6140E                            movzx edx, byte [rsi + rcx]
+    42 00000028 0FB6040F                            movzx eax, byte [rdi + rcx]
+    43                                  
+    44 0000002C 29D0                                sub eax, edx
+    45                                  
+    46 0000002E 5B                                  pop rbx
+    47 0000002F 5F                                  pop rdi
+    48 00000030 5E                                  pop rsi
+    49 00000031 C3                                  ret
+    50                                  
+    51                                  .equal:
+    52 00000032 31C0                                xor eax, eax
+    53 00000034 5B                                  pop rbx
+    54 00000035 5F                                  pop rdi
+    55 00000036 5E                                  pop rsi
+    56 00000037 C3                                  ret
+    57                                              

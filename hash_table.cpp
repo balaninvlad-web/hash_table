@@ -6,6 +6,7 @@ void CompletelyHashFuncs (HashTable* hash_table, char** words, int* word_count, 
     for (int i = 0; i < *word_count; ++i) 
         HashInsert (hash_table, words[i]);
     HashTableDescription (hash_table, filename);
+
     #ifndef NDEBUG
         HashPrintStats (hash_table);
     #endif

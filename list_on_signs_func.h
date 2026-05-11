@@ -10,7 +10,7 @@ typedef int ListErr_t;
 
 typedef struct Node
 {
-    char* key;
+    const char* key;
     int count;
     struct Node* next;
     struct Node* prev;
