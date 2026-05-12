@@ -87,9 +87,19 @@ Node* ListFindNode (LinkedList* list, const char* key)
 {
     if (!list || !key) return NULL;
     Node* current = list->dummy->next;
-    while (current != list->dummy) 
+    Node* dummy = list->dummy;
+
+    uint64_t key_prefix = 0;
+    __asm__ ("movq (%1), %0" : "=r" (key_prefix) : "r" (key) : "memory");
+
+    while (current != dummy) 
     {
-        if (current->key && MyAvxStrcmp (current->key, key) == 0) return current;
+        uint64_t node_prefix = 0;
+        __asm__ ("movq (%1), %0" : "=r" (node_prefix) : "r" (current->key) : "memory");
+        int equal = 0;
+        __asm__ ("cmp %2, %1; sete %0" : "=r" (equal) : "r" (node_prefix), "r" (key_prefix) : "cc");
+
+        if (equal && MyAvxStrcmp (current->key, key) == 0)  return current;
         current = current->next;
     }
     return NULL;
