@@ -15,15 +15,8 @@ global MyAvxStrcmp
 MyAvxStrcmp:
             ; ymm0 - a, ymm1 - b
 
-            push rsi
-            push rdi
-            push rbx
-
-            mov rsi, rcx           ; rsi = a
-            mov rdi, rdx           ; rdi = b
-
-            vmovdqa ymm0, [rsi]
-            vmovdqa ymm1, [rdi]
+            vmovdqa ymm0, [rdi]
+    	    vmovdqa ymm1, [rsi]
 
             ; Сравнивание побайтово (байты равны -> получается 0xFF в ymm2)
             vpcmpeqb ymm2, ymm0, ymm1
@@ -43,16 +36,9 @@ MyAvxStrcmp:
 
             sub  edx, eax                 
             mov  eax, edx
-
-            pop rbx
-            pop rdi
-            pop rsi
             ret
 
 .equal:
             xor eax, eax
-            pop rbx
-            pop rdi
-            pop rsi
             ret
             
