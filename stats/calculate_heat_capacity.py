@@ -27,6 +27,18 @@ def parse_distribution(filepath):
             full_counts[idx] = cnt
     return full_counts
 
+def compute_variance(data):
+    """
+    Вычисляет популяционную дисперсию списка чисел.
+    Var = (1/N) * sum((x_i - mean)^2)
+    """
+    n = len(data)
+    if n == 0:
+        return 0.0
+    mean = sum(data) / n
+    variance = sum((x - mean) ** 2 for x in data) / n
+    return variance
+
 def draw_histogram_full(counts, title, out_path, width=4096, height=800):
     """
     Рисует гистограмму для всех 4096 корзин.
@@ -108,6 +120,12 @@ def main():
             if not counts or max(counts) == 0:
                 print(f"Пропуск {fname}: нет данных")
                 continue
+
+            # ----- Расчёт дисперсии -----
+            variance = compute_variance(counts)
+            print(f"{fname}: Дисперсия = {variance:.2f}")
+            # ---------------------------
+
             # Имя для заголовка и файла
             name = os.path.splitext(fname)[0]
             out_path = os.path.join(out_dir, f"{name}.png")
