@@ -18,13 +18,13 @@
       <tr><th>Хеш-функция</th><th>Дисперсия</th><th>Гистограмма</th></tr>
     </thead>
     <tbody>
-      <tr><td>AlwaysOne</td><td>218050.35</td><td><img src="histograms_pillow/HashAlwaysOne.png" width="200"></td></tr>
+      <tr><td>AlwaysOne</td><td>218050.35</td><td><img src="/stats/histograms_pillow/HashAlwaysOne.png" width="200"></td></tr>
       <tr><td>FirstChar</td><td>8174.95</td><td><img src="histograms_pillow/HashFirstChar.png" width="200"></td></tr>
-      <tr><td>Length</td><td>25556.37</td><td><img src="histograms_pillow/HashLength.png" width="200"></td></tr>
-      <tr><td>Sum</td><td>287.74</td><td><img src="histograms_pillow/HashSum.png" width="200"></td></tr>
-      <tr><td>RotateLeft / RotateRight</td><td>8174.95</td><td><img src="histograms_pillow/HashRotateLeft.png" width="200"><br><img src="histograms_pillow/HashRotateRight.png" width="200"></td></tr>
-      <tr><td>GNU (DJB2)</td><td>7.09</td><td><img src="histograms_pillow/HashGnu.png" width="200"></td></tr>
-      <tr><td><strong>CRC32</strong></td><td><strong>7.10</strong></td><td><img src="histograms_pillow/HashCrc32.png" width="200"></td></tr>
+      <tr><td>Length</td><td>25556.37</td><td><img src="/stats/histograms_pillow/HashLength.png" width="200"></td></tr>
+      <tr><td>Sum</td><td>287.74</td><td><img src="/stats/histograms_pillow/HashSum.png" width="200"></td></tr>
+      <tr><td>RotateLeft / RotateRight</td><td>8174.95</td><td><img src="/stats/histograms_pillow/HashRotateLeft.png" width="200"><br><img src="/stats/histograms_pillow/HashRotateRight.png" width="200"></td></tr>
+      <tr><td>GNU (DJB2)</td><td>7.09</td><td><img src="/stats/histograms_pillow/HashGnu.png" width="200"></td></tr>
+      <tr><td><strong>CRC32</strong></td><td><strong>7.10</strong></td><td><img src="/stats/histograms_pillow/HashCrc32.png" width="200"></td></tr>
     </tbody>
   </table>
 </div>
@@ -75,7 +75,7 @@ uint64_t HashCrc32 (const char* key)
 Результат:
 Время → 20.303 с (ускорение 1.76×, +43.6% относительно базовой версии).
 
-![Профиль после ускорения хешфункции](Снимок экрана от 2026-05-11 11-38-29.png)
+![Профиль после ускорения хешфункции](stats/Снимок_экрана_от_2026-05-11_11-38-29.png)
 
 Вывод: замена программного CRC32 на аппаратный – самая эффективная оптимизация (основной прирост).
 
@@ -115,7 +115,7 @@ MyAvxStrcmp:
 
 время → 20.056 с (ускорение 1.78×, +1.2% относительно предыдущей версии)
 
-![Профиль после замены стркмп](Снимок экрана от 2026-05-12 12-42-52.png)
+![Профиль после замены стркмп](stats/Снимок_экрана_от_2026-05-12_12-42-52.png)
 
 Теперь `MyAvxStrcmp` – самая горячая точка. Ускорение небольшое, стандартный `strcmp` итак использует AVX2 и хорошо оптимизирован. Моя функция чуть быстрее за счёт отсутствия проверок длины и работы с выровненными данными.
 
@@ -157,7 +157,7 @@ MyAvxStrcmp:
 
 Время → 22.4 с (на **10% хуже** версии без фильтра)
 
-![Профиль после замены стркмп](Снимок экрана от 2026-05-12 12-40-37.png)
+![Профиль после замены стркмп](stats/Снимок_экрана_от_2026-05-12_12-40-37.png)
 
 | Параметр | Без фильтра (20.156 с) | С фильтром (22.4 с) | Изменение |
 |----------|------------------------|---------------------|------------|
